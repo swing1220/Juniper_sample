@@ -1,0 +1,25 @@
+[QFX5120]
+QFX5120_TEST_1 ansible_host=10.1.113.41 ##eknow_lab
+QFX5120_TEST_2 ansible_host=10.1.113.42 ##eknow_lab
+
+[EX4300]
+FA_BB02 ansible_host=10.1.113.55 ##eknow_lab
+OA_BB01 ansible_host=10.1.113.56 ##eknow_lab
+
+[EX3400]
+EX3400_VC_A ansible_host=10.1.113.50 ##eknow_lab
+EX3400_VC_B ansible_host=10.1.113.51 ##eknow_lab
+
+[juniper:children]
+QFX5120
+EX4300
+EX3400
+
+[juniper:vars]
+ansible_connection=netconf
+ansible_network_os=junos
+ansible_python_interpreter=/usr/bin/python2.7
+ansible_ssh_port=830
+ansible_ssh_user=juniper
+ansible_ssh_pass=juniper
+

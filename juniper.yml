@@ -1,0 +1,74 @@
+---
+- name: eknow_lab_test
+  hosts: QFX5120
+  roles:
+    - Juniper.junos
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: QFX5120_Check
+      include: /etc/ansible/QFX5120.yml
+
+- name: eknow_lab_test
+  hosts: EX4300
+  roles:
+    - Juniper.junos
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: EX4300_Check
+      include: /etc/ansible/EX4300.yml
+
+- name: eknow_lab_test
+  hosts: EX3400
+  roles:
+    - Juniper.junos
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: EX3400_Check
+      include: /etc/ansible/EX3400.yml
+
+
+
+##### 각 장비 점검 결과가 위치한 폴더의 모든 text파일을 병합
+    - name: Assemble from fragments from a directory
+      assemble:
+        src: "Result/{{ lookup('pipe', 'date +%Y%m%d') }}"
+        dest: "Result/juniper.txt"
+      ignore_errors: True
+
+##### 결과물 중 task 실행 간 발생한 불필요한 문자열 삭제
+    - name: Result modify1
+      replace:
+        path: "Result/juniper.txt"
+        regexp: "'msg': u'"
+        replace: ""
+
+    - name: Result modify2
+      replace:
+        path: "Result/juniper.txt"
+        regexp: "'failed': False, 'changed': False"
+        replace: ""
+
+    - name: Result modify3
+      replace:
+        path: "Result/juniper.txt"
+        regexp: "',"
+        replace: ""
+
+    - name: Result modify4
+      replace:
+        path: "Result/juniper.txt"
+        regexp: "{"
+        replace: ""
+
+    - name: Result modify5
+      replace:
+        path: "Result/juniper.txt"
+        regexp: "}"
+        replace: ""
+
+##### 결과물 엑셀로 저장
+    - name: To excel
+      shell: python To_excel.py
